@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>구구단 게임</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f2f6ff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .box {
+      width: 90%;
+      max-width: 650px;
+      background: white;
+      border-radius: 24px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 32px;
+    }
+
+    #problem {
+      font-size: 64px;
+      font-weight: bold;
+      margin: 25px 0;
+    }
+
+    input {
+      width: 150px;
+      font-size: 28px;
+      padding: 10px;
+      text-align: center;
+      border: 2px solid #aaa;
+      border-radius: 12px;
+    }
+
+    button {
+      font-size: 20px;
+      padding: 12px 18px;
+      margin: 6px;
+      border: 0;
+      border-radius: 12px;
+      background: #4f46e5;
+      color: white;
+      cursor: pointer;
+    }
+
+    #message {
+      font-size: 24px;
+      font-weight: bold;
+      min-height: 35px;
+      margin-top: 20px;
+    }
+
+    .correct {
+      color: #059669;
+    }
+
+    .wrong {
+      color: #dc2626;
+    }
+
+    #hint {
+      display: none;
+      margin-top: 25px;
+      padding: 20px;
+      background: #fff7ed;
+      border: 2px dashed #f97316;
+      border-radius: 18px;
+      text-align: left;
+    }
+
+    .group {
+      margin: 12px 0;
+      padding: 10px;
+      background: white;
+      border-radius: 12px;
+      border: 1px solid #fed7aa;
+    }
+
+    .circle {
+      display: inline-block;
+      width: 22px;
+      height: 22px;
+      margin: 4px;
+      border-radius: 50%;
+      background: #fb923c;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>구구단 게임</h1>
+    <div>맞힌 개수: <span id="score">0</span></div>
+
+    <div id="problem">2 × 3</div>
+
+    <input id="answer" type="number" placeholder="답">
+    <button onclick="checkAnswer()">확인</button>
+    <button onclick="newProblem()">다음 문제</button>
+
+    <div id="message"></div>
+
+    <div id="hint">
+      <b>동그라미 묶음으로 다시 생각해보기</b>
+      <div id="groups"></div>
+      <p id="helper"></p>
+    </div>
+  </div>
+
+  <script>
+    var a = 2;
+    var b = 3;
+    var score = 0;
+
+    function rand(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function newProblem() {
+      a = rand(2, 9);
+      b = rand(1, 9);
+
+      document.getElementById('problem').textContent = a + ' × ' + b;
+      document.getElementById('answer').value = '';
+      document.getElementById('message').textContent = '';
+      document.getElementById('message').className = '';
+      document.getElementById('hint').style.display = 'none';
+      document.getElementById('groups').innerHTML = '';
+      document.getElementById('helper').textContent = '';
+      document.getElementById('answer').focus();
+    }
+
+    function checkAnswer() {
+      var input = document.getElementById('answer');
+      var message = document.getElementById('message');
+      var userAnswer = Number(input.value);
+      var correctAnswer = a * b;
+
+      if (input.value === '') {
+        message.textContent = '답을 입력해줘.';
+        message.className = 'wrong';
+        return;
+      }
+
+      if (userAnswer === correctAnswer) {
+        score = score + 1;
+        document.getElementById('score').textContent = score;
+        message.textContent = '정답! 잘했어.';
+        message.className = 'correct';
+        document.getElementById('hint').style.display = 'none';
+        setTimeout(newProblem, 800);
+      } else {
+        message.textContent = '틀렸어. 정답은 바로 알려주지 않을게. 동그라미를 세어봐.';
+        message.className = 'wrong';
+        showHint();
+      }
+    }
+
+    function showHint() {
+      var groups = document.getElementById('groups');
+      groups.innerHTML = '';
+
+      for (var i = 1; i <= a; i++) {
+        var group = document.createElement('div');
+        group.className = 'group';
+        group.innerHTML = '<b>' + i + '번째 묶음</b><br>';
+
+        for (var j = 1; j <= b; j++) {
+          var circle = document.createElement('span');
+          circle.className = 'circle';
+          group.appendChild(circle);
+        }
+
+        groups.appendChild(group);
+      }
+
+      document.getElementById('helper').textContent = a + '묶음이 있고, 한 묶음마다 동그라미가 ' + b + '개 있어. 모두 몇 개인지 세어봐.';
+      document.getElementById('hint').style.display = 'block';
+    }
+
+    newProblem();
+  </script>
+</body>
+</html>
