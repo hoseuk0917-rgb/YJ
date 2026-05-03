@@ -189,6 +189,50 @@
     .parent-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; padding: 8px; border-radius: 12px; background: #f8fbff; font-size: 12px; font-weight: 850; color: var(--muted); }
     .parent-row b { color: var(--ink); }
 
+    .family-dex { margin-top: 14px; display: grid; gap: 8px; }
+    .family-section { border: 1px solid var(--line); border-radius: 18px; background: #fff; overflow: hidden; }
+    .family-head { width: 100%; display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; padding: 11px 12px; background: #f8fbff; color: var(--ink); text-align: left; font-weight: 950; }
+    .family-meta { color: var(--muted); font-size: 11px; font-weight: 900; margin-top: 2px; }
+    .family-toggle { color: #5145cf; font-size: 12px; font-weight: 950; }
+    .family-body { display: none; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 9px; border-top: 1px solid var(--line); }
+    .family-section.open .family-body { display: grid; }
+    .dex-open-btn { width: 100%; margin-top: 10px; padding: 12px; border-radius: 16px; background: var(--soft-purple); color: #5145cf; font-weight: 950; }
+
+    .dex-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 85;
+      display: none;
+      padding: 14px;
+      background: rgba(32, 35, 58, 0.38);
+      backdrop-filter: blur(6px);
+    }
+    .dex-modal.show { display: grid; place-items: center; }
+    .dex-card {
+      width: min(760px, 100%);
+      max-height: min(86vh, 760px);
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      border-radius: 30px;
+      background: rgba(255,255,255,0.97);
+      border: 1px solid rgba(255,255,255,0.9);
+      box-shadow: 0 24px 70px rgba(32,35,58,0.24);
+    }
+    .dex-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 18px; border-bottom: 1px solid var(--line); }
+    .dex-title { font-size: 24px; font-weight: 950; letter-spacing: -0.04em; }
+    .dex-close { padding: 10px 12px; border-radius: 14px; background: #fff5f5; color: #b42318; border: 1px solid #ffd0d3; font-weight: 950; }
+    .dex-tabs { display: flex; gap: 8px; overflow: auto; padding: 12px 18px; border-bottom: 1px solid var(--line); }
+    .dex-tab { flex: 0 0 auto; padding: 9px 11px; border-radius: 999px; background: #fff; border: 1px solid var(--line); color: var(--muted); font-weight: 950; font-size: 12px; }
+    .dex-tab.active { background: var(--soft-purple); color: #5145cf; border-color: #d8d1ff; }
+    .dex-content { overflow: auto; padding: 16px 18px 20px; }
+    .dex-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .dex-card-mini { min-height: 108px; padding: 11px 6px; border-radius: 18px; background: #fff; border: 1px solid var(--line); text-align: center; }
+    .dex-card-mini.unknown { opacity: 0.42; filter: grayscale(0.75); }
+    .dex-emoji { font-size: 34px; }
+    .dex-name { font-size: 12px; font-weight: 950; margin-top: 4px; }
+    .dex-status { color: var(--muted); font-size: 10px; font-weight: 850; margin-top: 3px; }
+
     .progress-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
     .progress-dots { display: flex; gap: 6px; flex-wrap: wrap; }
     .dot { width: 13px; height: 13px; border-radius: 999px; background: #dfe4f2; }
@@ -378,11 +422,13 @@
     }
 
     @media (max-width: 760px) {
+      .dex-grid { grid-template-columns: repeat(3, 1fr); }
       .principle-grid { grid-template-columns: 1fr; }
       .pizza-svg { width: 140px; height: 140px; margin: 0 auto; }
     }
 
     @media (max-width: 560px) {
+      .dex-grid { grid-template-columns: repeat(2, 1fr); }
       .start-grid { grid-template-columns: 1fr; }
       .app { padding: 10px; }
       .topbar { align-items: flex-start; flex-direction: column; }
@@ -413,6 +459,7 @@
         </div>
         <div class="stats">
           <div class="pill">⭐ <span class="pill-label">별</span> <span id="starCount">0</span></div>
+          <div class="pill">🧩 <span class="pill-label">조각</span> <span id="wishPieceCount">0/3</span></div>
           <div class="pill">🎫 <span class="pill-label">소원</span> <span id="wishCount">0</span><button class="mini-use-btn" id="topWishUseBtn" onclick="useWishTicket(event)">사용</button></div>
           <div class="pill">🔥 <span class="pill-label">연속</span> <span id="streakCount">0</span></div>
           <div class="pill">🏆 <span class="pill-label">최고</span> <span id="bestStreak">0</span></div>
@@ -428,7 +475,7 @@
           <div class="mode-list" id="modeList"></div>
           <div class="tip-box">
             <div class="tip-title">보상 규칙</div>
-            <div class="tip-text">처음에 맞히면 별 2개, 힌트 뒤에 맞히면 별 1개. 별 20개마다 알이 부화해요.</div>
+            <div class="tip-text">처음에 맞히면 별 2개, 힌트 뒤에 맞히면 별 1개. 별 20개마다 새 알 또는 성장간식을 받아요.</div>
           </div>
           <div class="difficulty-box">
             <div class="tip-title">난이도</div>
@@ -449,6 +496,7 @@
               <button class="start-btn" onclick="startMode('gugu')"><div class="start-icon">✖️</div><div><div class="start-name">구구단</div><div class="start-desc">묶음으로 곱셈 익히기</div></div></button>
               <button class="start-btn" onclick="startMode('divisionPrinciple')"><div class="start-icon">➗</div><div><div class="start-name">나눗셈 원리</div><div class="start-desc">피자 조각과 막대로 이해하기</div></div></button>
               <button class="start-btn" onclick="startMode('mixed')"><div class="start-icon">🎒</div><div><div class="start-name">3학년 실전</div><div class="start-desc">여러 단원 섞어서 풀기</div></div></button>
+              <button class="start-btn" onclick="startMode('life')"><div class="start-icon">🏠</div><div><div class="start-name">생활미션</div><div class="start-desc">마트·학교·간식 문제</div></div></button>
               <button class="start-btn" onclick="startMode('review')"><div class="start-icon">📘</div><div><div class="start-name">오답 다시 도전</div><div class="start-desc">틀렸던 문제 다시 풀기</div></div></button>
             </div>
             <div class="settings-area">
@@ -525,7 +573,7 @@
             <div class="monster-name" id="mainMonsterName">알콩이</div>
             <div class="monster-stage" id="mainMonsterStage">1단계</div>
             <div class="exp-track"><div class="exp-fill" id="expFill"></div></div>
-            <div class="exp-text" id="expText">경험치 0/30</div>
+            <div class="exp-text" id="expText">경험치 0/80</div>
           </div>
 
           <div class="egg-box">
@@ -539,15 +587,17 @@
               <div class="parent-row"><span>오늘 정답</span><b id="parentToday">0문제</b></div>
               <div class="parent-row"><span>오답노트</span><b id="parentReview">0개</b></div>
               <div class="parent-row"><span>약한 단원</span><b id="parentWeak">아직 없음</b></div>
+              <div class="parent-row"><span>소원조각</span><b id="parentPiece">0/3</b></div>
               <div class="parent-row"><span>소원권</span><b id="parentWish">0장</b></div>
               <button class="setting-btn" id="parentWishUseBtn" onclick="useWishTicket()">소원권 1장 사용</button>
-              <button class="setting-btn" onclick="addTestWishTicket()">테스트 +1</button>
+              
             </div>
           </div>
 
           <div class="collection">
-            <div class="panel-title" style="font-size:16px;margin-top:16px;">몬스터 도감</div>
-            <div class="collection-grid" id="collectionGrid"></div>
+            <div class="panel-title" style="font-size:16px;margin-top:16px;">분야별 몬스터</div>
+            <div class="family-dex" id="familyDex"></div>
+            <button class="dex-open-btn" onclick="openDexModal()">📖 전체 도감 보기</button>
           </div>
         </aside>
       </main>
@@ -571,9 +621,21 @@
     </div>
   </div>
 
+  <div class="dex-modal" id="dexModal" onclick="closeDexModal()">
+    <div class="dex-card" onclick="event.stopPropagation()">
+      <div class="dex-top">
+        <div class="dex-title">📖 수학몬 전체 도감</div>
+        <button class="dex-close" onclick="closeDexModal()">닫기</button>
+      </div>
+      <div class="dex-tabs" id="dexTabs"></div>
+      <div class="dex-content" id="dexContent"></div>
+    </div>
+  </div>
+
   <script>
     const MODES = [
       { id: 'mixed', icon: '🎒', name: '3학년 실전', desc: '여러 단원 섞어서 10문제' },
+      { id: 'life', icon: '🏠', name: '생활미션', desc: '마트·학교·간식 상황 문제' },
       { id: 'review', icon: '📘', name: '오답 다시 도전', desc: '틀렸던 문제를 다시 풀기' },
       { id: 'gugu', icon: '✖️', name: '구구단', desc: '동그라미 묶음으로 곱셈 익히기' },
       { id: 'divisionPrinciple', icon: '➗', name: '나눗셈 원리', desc: '피자 조각과 긴 막대로 나누기' },
@@ -586,38 +648,38 @@
     ];
 
     const MONSTER_BOOK = {
-      sprout: [{ emoji: '🌱', name: '새콩이', need: 0 }, { emoji: '🌿', name: '잎새몽', need: 200 }, { emoji: '🌳', name: '숲수호몽', need: 200 }],
-      flame: [{ emoji: '🔥', name: '불씨몽', need: 0 }, { emoji: '🦊', name: '파이어퐁', need: 200 }, { emoji: '🦁', name: '불꽃왕', need: 200 }],
-      water: [{ emoji: '💧', name: '방울몽', need: 0 }, { emoji: '🐢', name: '물거북몽', need: 200 }, { emoji: '🐉', name: '바다용몽', need: 200 }],
-      cloud: [{ emoji: '☁️', name: '구름몽', need: 0 }, { emoji: '🪽', name: '날개몽', need: 200 }, { emoji: '🦅', name: '하늘몽', need: 200 }],
-      star: [{ emoji: '✨', name: '반짝몽', need: 0 }, { emoji: '🌟', name: '별빛몽', need: 200 }, { emoji: '🦄', name: '루미몽', need: 200 }],
-      robot: [{ emoji: '🤖', name: '봇몽', need: 0 }, { emoji: '🛠️', name: '기계몽', need: 200 }, { emoji: '🚀', name: '로켓몽', need: 200 }],
+      sprout: [{ emoji: '🌱', name: '새싹알', need: 0 }, { emoji: '🌿', name: '잎새몽', need: 80 }, { emoji: '🌲', name: '나무몽', need: 200 }, { emoji: '🌳', name: '숲수호몽', need: 400 }],
+      flame: [{ emoji: '🔥', name: '불씨알', need: 0 }, { emoji: '🦊', name: '불꽃여우', need: 80 }, { emoji: '🐯', name: '화염호랑', need: 200 }, { emoji: '🦁', name: '불꽃왕', need: 400 }],
+      water: [{ emoji: '💧', name: '물방울알', need: 0 }, { emoji: '🐢', name: '물거북몽', need: 80 }, { emoji: '🐬', name: '물결돌고래', need: 200 }, { emoji: '🐉', name: '바다용몽', need: 400 }],
+      cloud: [{ emoji: '☁️', name: '구름알', need: 0 }, { emoji: '🪽', name: '날개몽', need: 80 }, { emoji: '🦅', name: '하늘독수리', need: 200 }, { emoji: '🌈', name: '무지개하늘몽', need: 400 }],
+      star: [{ emoji: '✨', name: '반짝알', need: 0 }, { emoji: '🌟', name: '별빛몽', need: 80 }, { emoji: '🦄', name: '별빛유니몽', need: 200 }, { emoji: '💫', name: '은하수몽', need: 400 }],
+      robot: [{ emoji: '🤖', name: '로봇알', need: 0 }, { emoji: '🛠️', name: '공구로봇', need: 80 }, { emoji: '🚀', name: '로켓로봇', need: 200 }, { emoji: '🛰️', name: '우주로봇', need: 400 }],
 
-      times: [{ emoji: '✖️', name: '곱셈알', need: 0 }, { emoji: '🧮', name: '구구몽', need: 200 }, { emoji: '🐯', name: '곱셈호랑', need: 200 }],
-      times_bird: [{ emoji: '🐣', name: '구구병아리', need: 0 }, { emoji: '🐤', name: '구구참새', need: 200 }, { emoji: '🦅', name: '구구독수리', need: 200 }],
-      times_rabbit: [{ emoji: '🥕', name: '묶음씨앗', need: 0 }, { emoji: '🐰', name: '묶음토끼', need: 200 }, { emoji: '🐯', name: '배열호랑', need: 200 }],
-      times_dragon: [{ emoji: '⭐', name: '별점알', need: 0 }, { emoji: '🦊', name: '계산여우', need: 200 }, { emoji: '🐲', name: '곱셈드래곤', need: 200 }],
+      times: [{ emoji: '✖️', name: '곱셈알', need: 0 }, { emoji: '🧮', name: '구구단몽', need: 80 }, { emoji: '🐯', name: '곱셈호랑', need: 200 }, { emoji: '🐲', name: '곱셈드래곤', need: 400 }],
+      times_bird: [{ emoji: '🐣', name: '구구알', need: 0 }, { emoji: '🐤', name: '구구참새', need: 80 }, { emoji: '🦅', name: '구구독수리', need: 200 }, { emoji: '🦜', name: '구구불사조', need: 400 }],
+      times_rabbit: [{ emoji: '🥕', name: '묶음알', need: 0 }, { emoji: '🐰', name: '묶음토끼', need: 80 }, { emoji: '🐯', name: '배열호랑', need: 200 }, { emoji: '🦁', name: '묶음사자왕', need: 400 }],
+      times_dragon: [{ emoji: '⭐', name: '곱셈별알', need: 0 }, { emoji: '🦊', name: '계산여우', need: 80 }, { emoji: '🐺', name: '구구늑대', need: 200 }, { emoji: '🐉', name: '곱셈용왕', need: 400 }],
 
-      divide: [{ emoji: '➗', name: '나눔알', need: 0 }, { emoji: '🍕', name: '나눔피자몽', need: 200 }, { emoji: '🐳', name: '나눗셈고래', need: 200 }],
-      divide_pizza: [{ emoji: '🍕', name: '피자조각알', need: 0 }, { emoji: '🐧', name: '조각펭귄', need: 200 }, { emoji: '🐳', name: '나눔고래', need: 200 }],
-      divide_rod: [{ emoji: '📏', name: '막대알', need: 0 }, { emoji: '🦦', name: '막대수달', need: 200 }, { emoji: '🐘', name: '나눔코끼리', need: 200 }],
-      divide_fox: [{ emoji: '🎯', name: '몫알', need: 0 }, { emoji: '🦊', name: '균등여우', need: 200 }, { emoji: '🦁', name: '몫사자', need: 200 }],
+      divide: [{ emoji: '➗', name: '나눗셈알', need: 0 }, { emoji: '🍕', name: '나눔피자몽', need: 80 }, { emoji: '🐳', name: '몫고래', need: 200 }, { emoji: '🐋', name: '나눗셈왕고래', need: 400 }],
+      divide_pizza: [{ emoji: '🍕', name: '피자조각알', need: 0 }, { emoji: '🐧', name: '조각펭귄', need: 80 }, { emoji: '🦭', name: '균등물개', need: 200 }, { emoji: '🐳', name: '나눔고래', need: 400 }],
+      divide_rod: [{ emoji: '📏', name: '막대나눔알', need: 0 }, { emoji: '🦦', name: '막대수달', need: 80 }, { emoji: '🐘', name: '균등코끼리', need: 200 }, { emoji: '🦣', name: '나눔맘모스', need: 400 }],
+      divide_fox: [{ emoji: '🎯', name: '몫찾기알', need: 0 }, { emoji: '🦊', name: '몫여우', need: 80 }, { emoji: '🦁', name: '몫사자', need: 200 }, { emoji: '👑', name: '나눗셈왕', need: 400 }],
 
-      plus: [{ emoji: '➕', name: '더하기알', need: 0 }, { emoji: '🐰', name: '덧뺄토끼', need: 200 }, { emoji: '🦌', name: '계산사슴', need: 200 }],
-      plus_bunny: [{ emoji: '🫘', name: '숫자콩', need: 0 }, { emoji: '🐰', name: '더하기토끼', need: 200 }, { emoji: '🦌', name: '계산사슴', need: 200 }],
-      plus_fox: [{ emoji: '🔢', name: '자리수알', need: 0 }, { emoji: '🦊', name: '자리수여우', need: 200 }, { emoji: '🦉', name: '계산부엉', need: 200 }],
+      plus: [{ emoji: '➕', name: '덧뺄알', need: 0 }, { emoji: '🐰', name: '덧뺄토끼', need: 80 }, { emoji: '🦌', name: '자리수사슴', need: 200 }, { emoji: '🦉', name: '계산부엉이', need: 400 }],
+      plus_bunny: [{ emoji: '🫘', name: '숫자콩알', need: 0 }, { emoji: '🐰', name: '더하기토끼', need: 80 }, { emoji: '🦌', name: '빼기사슴', need: 200 }, { emoji: '🦄', name: '덧뺄유니몽', need: 400 }],
+      plus_fox: [{ emoji: '🔢', name: '자리수알', need: 0 }, { emoji: '🦊', name: '자리수여우', need: 80 }, { emoji: '🦉', name: '받아올림부엉', need: 200 }, { emoji: '🧙', name: '계산마법사', need: 400 }],
 
-      ruler: [{ emoji: '📏', name: '자몽알', need: 0 }, { emoji: '⏰', name: '시간자몽', need: 200 }, { emoji: '🦒', name: '단위기린', need: 200 }],
-      ruler_clock: [{ emoji: '⏱️', name: '시계알', need: 0 }, { emoji: '⏰', name: '시간몽', need: 200 }, { emoji: '🦉', name: '시간부엉', need: 200 }],
-      ruler_giraffe: [{ emoji: '📐', name: '자알', need: 0 }, { emoji: '🦒', name: '길이기린', need: 200 }, { emoji: '🐘', name: '단위코끼리', need: 200 }],
+      ruler: [{ emoji: '📏', name: '단위알', need: 0 }, { emoji: '⏰', name: '시간몽', need: 80 }, { emoji: '🦒', name: '길이기린', need: 200 }, { emoji: '🐘', name: '단위코끼리', need: 400 }],
+      ruler_clock: [{ emoji: '⏱️', name: '시계알', need: 0 }, { emoji: '⏰', name: '시간토끼', need: 80 }, { emoji: '🦉', name: '시간부엉', need: 200 }, { emoji: '🕰️', name: '시간수호몽', need: 400 }],
+      ruler_giraffe: [{ emoji: '📐', name: '길이알', need: 0 }, { emoji: '🦒', name: '자기린', need: 80 }, { emoji: '🐘', name: '무게코끼리', need: 200 }, { emoji: '🚚', name: '단위운반왕', need: 400 }],
 
-      fraction: [{ emoji: '🍕', name: '분수알', need: 0 }, { emoji: '🍰', name: '조각케이크몽', need: 200 }, { emoji: '🦄', name: '소수유니몽', need: 200 }],
-      fraction_pizza: [{ emoji: '🍕', name: '분수피자알', need: 0 }, { emoji: '🐭', name: '조각쥐', need: 200 }, { emoji: '🦄', name: '분수유니몽', need: 200 }],
-      fraction_cake: [{ emoji: '🍰', name: '케이크알', need: 0 }, { emoji: '🧁', name: '컵케이크몽', need: 200 }, { emoji: '🎂', name: '소수케이크왕', need: 200 }],
+      fraction: [{ emoji: '🍕', name: '분수알', need: 0 }, { emoji: '🍰', name: '조각케이크몽', need: 80 }, { emoji: '🦄', name: '분수유니몽', need: 200 }, { emoji: '👑', name: '분수왕', need: 400 }],
+      fraction_pizza: [{ emoji: '🍕', name: '분수피자알', need: 0 }, { emoji: '🐭', name: '조각쥐', need: 80 }, { emoji: '🧀', name: '분수치즈몽', need: 200 }, { emoji: '🦄', name: '분수유니콘', need: 400 }],
+      fraction_cake: [{ emoji: '🍰', name: '소수케이크알', need: 0 }, { emoji: '🧁', name: '소수컵케이크', need: 80 }, { emoji: '🎂', name: '소수케이크왕자', need: 200 }, { emoji: '🏰', name: '소수케이크성', need: 400 }],
 
-      geometry: [{ emoji: '⭕', name: '도형알', need: 0 }, { emoji: '🔺', name: '도형삼각몽', need: 200 }, { emoji: '🛸', name: '원반도형몽', need: 200 }],
-      geometry_circle: [{ emoji: '⭕', name: '동그라미알', need: 0 }, { emoji: '🛡️', name: '원방패몽', need: 200 }, { emoji: '🛸', name: '원반도형몽', need: 200 }],
-      geometry_triangle: [{ emoji: '🔺', name: '삼각알', need: 0 }, { emoji: '🐱', name: '세모고양', need: 200 }, { emoji: '🏰', name: '도형성몽', need: 200 }]
+      geometry: [{ emoji: '⭕', name: '도형알', need: 0 }, { emoji: '🔺', name: '세모몽', need: 80 }, { emoji: '🛡️', name: '원방패몽', need: 200 }, { emoji: '🛸', name: '도형비행몽', need: 400 }],
+      geometry_circle: [{ emoji: '⭕', name: '원알', need: 0 }, { emoji: '🛡️', name: '원방패몽', need: 80 }, { emoji: '🛸', name: '원반몽', need: 200 }, { emoji: '🌕', name: '보름원몽', need: 400 }],
+      geometry_triangle: [{ emoji: '🔺', name: '세모알', need: 0 }, { emoji: '🐱', name: '세모고양', need: 80 }, { emoji: '🏰', name: '도형성몽', need: 200 }, { emoji: '💎', name: '도형보석몽', need: 400 }]
     };
 
     const MONSTER_FAMILIES = {
@@ -634,6 +696,16 @@
       return acc;
     }, {});
 
+    const FAMILY_INFO = {
+      all: { icon: '📖', name: '전체' },
+      times: { icon: '✖️', name: '곱셈' },
+      divide: { icon: '➗', name: '나눗셈' },
+      plus: { icon: '➕', name: '덧뺄' },
+      ruler: { icon: '📏', name: '단위' },
+      fraction: { icon: '🍕', name: '분수' },
+      geometry: { icon: '⭕', name: '도형' }
+    };
+
     const SET_SIZE = 10;
     const MAX_INPUT_LEN = 5;
     const EGG_INTERVAL = 20;
@@ -641,23 +713,23 @@
     let app = loadGame();
 
     const els = {
-      starCount: document.getElementById('starCount'), wishCount: document.getElementById('wishCount'), streakCount: document.getElementById('streakCount'), bestStreak: document.getElementById('bestStreak'), totalCorrect: document.getElementById('totalCorrect'),
+      starCount: document.getElementById('starCount'), wishPieceCount: document.getElementById('wishPieceCount'), wishCount: document.getElementById('wishCount'), streakCount: document.getElementById('streakCount'), bestStreak: document.getElementById('bestStreak'), totalCorrect: document.getElementById('totalCorrect'),
       modeList: document.getElementById('modeList'), difficultyList: document.getElementById('difficultyList'), missionList: document.getElementById('missionList'), progressDots: document.getElementById('progressDots'), questionCounter: document.getElementById('questionCounter'), unitChip: document.getElementById('unitChip'), difficultyChip: document.getElementById('difficultyChip'),
       questionText: document.getElementById('questionText'), questionSub: document.getElementById('questionSub'), answerDisplay: document.getElementById('answerDisplay'), feedback: document.getElementById('feedback'),
       feedbackTitle: document.getElementById('feedbackTitle'), feedbackText: document.getElementById('feedbackText'), hintBox: document.getElementById('hintBox'), feedbackButtons: document.getElementById('feedbackButtons'),
       startView: document.getElementById('startView'), quizView: document.getElementById('quizView'), resultView: document.getElementById('resultView'), resultEmoji: document.getElementById('resultEmoji'), resultTitle: document.getElementById('resultTitle'),
       resultMessage: document.getElementById('resultMessage'), resultCorrect: document.getElementById('resultCorrect'), resultStars: document.getElementById('resultStars'), resultBestStreak: document.getElementById('resultBestStreak'),
-      mainMonsterEmoji: document.getElementById('mainMonsterEmoji'), mainMonsterName: document.getElementById('mainMonsterName'), mainMonsterStage: document.getElementById('mainMonsterStage'), expFill: document.getElementById('expFill'), expText: document.getElementById('expText'), eggText: document.getElementById('eggText'), collectionGrid: document.getElementById('collectionGrid'),
+      mainMonsterEmoji: document.getElementById('mainMonsterEmoji'), mainMonsterName: document.getElementById('mainMonsterName'), mainMonsterStage: document.getElementById('mainMonsterStage'), expFill: document.getElementById('expFill'), expText: document.getElementById('expText'), eggText: document.getElementById('eggText'), familyDex: document.getElementById('familyDex'), dexModal: document.getElementById('dexModal'), dexTabs: document.getElementById('dexTabs'), dexContent: document.getElementById('dexContent'),
       menuToggle: document.getElementById('menuToggle'), sidePanel: document.getElementById('sidePanel'), drawerBackdrop: document.getElementById('drawerBackdrop'),
       toast: document.getElementById('toast'), toastEmoji: document.getElementById('toastEmoji'), toastTitle: document.getElementById('toastTitle'), toastText: document.getElementById('toastText'),
       celebration: document.getElementById('celebration'), celebrationEmoji: document.getElementById('celebrationEmoji'), celebrationTitle: document.getElementById('celebrationTitle'), celebrationText: document.getElementById('celebrationText'), soundToggleBtn: document.getElementById('soundToggleBtn'),
-      parentToday: document.getElementById('parentToday'), parentReview: document.getElementById('parentReview'), parentWeak: document.getElementById('parentWeak'), parentWish: document.getElementById('parentWish'), topWishUseBtn: document.getElementById('topWishUseBtn'), parentWishUseBtn: document.getElementById('parentWishUseBtn')
+      parentToday: document.getElementById('parentToday'), parentReview: document.getElementById('parentReview'), parentWeak: document.getElementById('parentWeak'), parentPiece: document.getElementById('parentPiece'), parentWish: document.getElementById('parentWish'), topWishUseBtn: document.getElementById('topWishUseBtn'), parentWishUseBtn: document.getElementById('parentWishUseBtn')
     };
 
     function defaultGame() {
       const firstId = Date.now();
       return {
-        mode: 'gugu', difficulty: 'easy', soundOn: true, stars: 0, wishTickets: 0, totalCorrect: 0, bestStreak: 0, streak: 0,
+        mode: 'gugu', difficulty: 'easy', soundOn: true, stars: 0, wishPieces: 0, wishTickets: 0, openFamilies: { times: true }, dexFilter: 'all', totalCorrect: 0, bestStreak: 0, streak: 0,
         nextEggAt: EGG_INTERVAL,
         monsters: [{ type: 'sprout', exp: 0, stage: 0, id: firstId }],
         activeMonsterId: firstId,
@@ -675,6 +747,9 @@
         const merged = { ...defaultGame(), ...saved };
         if (!merged.monsters || merged.monsters.length === 0) merged.monsters = defaultGame().monsters;
         if (!merged.activeMonsterId) merged.activeMonsterId = merged.monsters[0].id;
+        if (merged.wishPieces === undefined) merged.wishPieces = 0;
+        if (!merged.openFamilies) merged.openFamilies = { times: true };
+        if (!merged.dexFilter) merged.dexFilter = 'all';
         if (merged.soundOn === undefined) merged.soundOn = true;
         if (!Array.isArray(merged.recentQuestions)) merged.recentQuestions = [];
         if (!Array.isArray(merged.mistakes)) merged.mistakes = [];
@@ -687,7 +762,7 @@
 
     function saveGame() {
       const snapshot = {
-        mode: app.mode, difficulty: app.difficulty, soundOn: app.soundOn !== false, recentQuestions: app.recentQuestions || [], stars: app.stars, wishTickets: app.wishTickets || 0, totalCorrect: app.totalCorrect, bestStreak: app.bestStreak,
+        mode: app.mode, difficulty: app.difficulty, soundOn: app.soundOn !== false, recentQuestions: app.recentQuestions || [], stars: app.stars, wishPieces: app.wishPieces || 0, wishTickets: app.wishTickets || 0, openFamilies: app.openFamilies || { times: true }, dexFilter: app.dexFilter || 'all', totalCorrect: app.totalCorrect, bestStreak: app.bestStreak,
         nextEggAt: app.nextEggAt, monsters: app.monsters, activeMonsterId: app.activeMonsterId, mistakes: app.mistakes, daily: app.daily
       };
       localStorage.setItem('mathMonSaveV3', JSON.stringify(snapshot));
@@ -809,6 +884,7 @@
         if (!weak || (row.wrong || 0) > weak.wrong) weak = { mode, wrong: row.wrong || 0 };
       });
       els.parentWeak.textContent = weak && weak.wrong > 0 ? modeDisplayName(weak.mode) : '아직 없음';
+      if (els.parentPiece) els.parentPiece.textContent = `${app.wishPieces || 0}/3`;
       if (els.parentWish) els.parentWish.textContent = `${app.wishTickets || 0}장`;
     }
 
@@ -836,6 +912,7 @@
 
     function updateStats() {
       els.starCount.textContent = app.stars;
+      els.wishPieceCount.textContent = `${app.wishPieces || 0}/3`;
       els.wishCount.textContent = app.wishTickets || 0;
       els.streakCount.textContent = app.streak;
       els.bestStreak.textContent = app.bestStreak;
@@ -867,19 +944,120 @@
       }
 
       const left = Math.max(0, app.nextEggAt - app.stars);
-      els.eggText.textContent = left === 0 ? '곧 새 알이 부화해요!' : `별 ${left}개를 더 모으면 새 몬스터가 태어나요.`;
+      els.eggText.textContent = left === 0 ? '곧 새 알이나 성장간식을 받아요!' : `별 ${left}개를 더 모으면 새 알 또는 성장간식을 받아요.`;
 
-      els.collectionGrid.innerHTML = '';
-      app.monsters.forEach(monster => {
-        const item = monsterInfo(monster);
-        const card = document.createElement('button');
-        card.className = 'monster-card-mini' + (monster.id === app.activeMonsterId ? ' active' : '');
-        const isFinal = monster.stage >= MONSTER_BOOK[monster.type].length - 1;
-        card.innerHTML = `<div class="mini-emoji">${item.emoji}</div><div class="mini-name">${item.name}</div><div class="mini-stage">${isFinal ? '🎫 졸업' : `${monster.stage + 1}단계`}</div>`;
-        card.onclick = () => { app.activeMonsterId = monster.id; saveGame(); renderMonsterPanel(); };
-        els.collectionGrid.appendChild(card);
-      });
+      renderFamilyDex();
       renderParentSummary();
+    }
+
+    function makeMiniMonsterCard(monster) {
+      const item = monsterInfo(monster);
+      const isFinal = monster.stage >= MONSTER_BOOK[monster.type].length - 1;
+      const card = document.createElement('button');
+      card.className = 'monster-card-mini' + (monster.id === app.activeMonsterId ? ' active' : '');
+      card.innerHTML = `<div class="mini-emoji">${item.emoji}</div><div class="mini-name">${item.name}</div><div class="mini-stage">${isFinal ? '🧩 졸업' : `${monster.stage + 1}단계`}</div>`;
+      card.onclick = () => {
+        app.activeMonsterId = monster.id;
+        saveGame();
+        renderMonsterPanel();
+      };
+      return card;
+    }
+
+    function renderFamilyDex() {
+      if (!els.familyDex) return;
+      app.openFamilies = app.openFamilies || { times: true };
+      els.familyDex.innerHTML = '';
+      Object.keys(MONSTER_FAMILIES).forEach(family => {
+        const monsters = (app.monsters || []).filter(m => getFamilyForMonster(m) === family);
+        const activeCount = monsters.filter(m => m.stage < MONSTER_BOOK[m.type].length - 1).length;
+        const finalCount = monsters.filter(m => m.stage >= MONSTER_BOOK[m.type].length - 1).length;
+        const info = FAMILY_INFO[family];
+        const section = document.createElement('div');
+        section.className = 'family-section' + (app.openFamilies[family] ? ' open' : '');
+
+        const head = document.createElement('button');
+        head.className = 'family-head';
+        head.innerHTML = `<div><div>${info.icon} ${info.name}</div><div class="family-meta">성장중 ${activeCount} · 졸업 ${finalCount} · 보유 ${monsters.length}</div></div><div class="family-toggle">${app.openFamilies[family] ? '접기' : '펼치기'}</div>`;
+        head.onclick = () => {
+          app.openFamilies[family] = !app.openFamilies[family];
+          saveGame();
+          renderFamilyDex();
+        };
+        section.appendChild(head);
+
+        const body = document.createElement('div');
+        body.className = 'family-body';
+        if (monsters.length === 0) {
+          const empty = document.createElement('div');
+          empty.className = 'mini-stage';
+          empty.style.gridColumn = '1 / -1';
+          empty.style.padding = '8px';
+          empty.textContent = '아직 발견한 몬스터가 없어요.';
+          body.appendChild(empty);
+        } else {
+          monsters.slice(0, 6).forEach(monster => body.appendChild(makeMiniMonsterCard(monster)));
+          if (monsters.length > 6) {
+            const more = document.createElement('button');
+            more.className = 'monster-card-mini';
+            more.innerHTML = `<div class="mini-emoji">📖</div><div class="mini-name">더 보기</div><div class="mini-stage">${monsters.length - 6}마리 더</div>`;
+            more.onclick = () => openDexModal(family);
+            body.appendChild(more);
+          }
+        }
+        section.appendChild(body);
+        els.familyDex.appendChild(section);
+      });
+    }
+
+    function openDexModal(filter = app.dexFilter || 'all') {
+      app.dexFilter = filter;
+      saveGame();
+      renderDexModal();
+      els.dexModal.classList.add('show');
+    }
+
+    function closeDexModal() {
+      els.dexModal.classList.remove('show');
+    }
+
+    function renderDexModal() {
+      if (!els.dexTabs || !els.dexContent) return;
+      const filters = ['all', ...Object.keys(MONSTER_FAMILIES)];
+      els.dexTabs.innerHTML = '';
+      filters.forEach(filter => {
+        const info = FAMILY_INFO[filter];
+        const btn = document.createElement('button');
+        btn.className = 'dex-tab' + (app.dexFilter === filter ? ' active' : '');
+        btn.textContent = `${info.icon} ${info.name}`;
+        btn.onclick = () => openDexModal(filter);
+        els.dexTabs.appendChild(btn);
+      });
+
+      const families = app.dexFilter === 'all' ? Object.keys(MONSTER_FAMILIES) : [app.dexFilter];
+      const types = families.flatMap(family => MONSTER_FAMILIES[family] || []);
+      els.dexContent.innerHTML = '<div class="dex-grid" id="dexGridInner"></div>';
+      const grid = document.getElementById('dexGridInner');
+
+      types.forEach(type => {
+        const owned = (app.monsters || []).filter(m => m.type === type);
+        const best = owned.slice().sort((a, b) => b.stage - a.stage || b.exp - a.exp)[0];
+        const stage = best ? best.stage : 0;
+        const book = MONSTER_BOOK[type];
+        const info = book[best ? stage : 0];
+        const isFinal = best && stage >= book.length - 1;
+        const card = document.createElement('button');
+        card.className = 'dex-card-mini' + (!best ? ' unknown' : '');
+        card.innerHTML = `<div class="dex-emoji">${best ? info.emoji : '❔'}</div><div class="dex-name">${best ? info.name : book[0].name}</div><div class="dex-status">${best ? (isFinal ? '🧩 졸업' : `${stage + 1}단계 · ${best.exp}EXP`) : '미발견'}</div>`;
+        card.onclick = () => {
+          if (!best) return;
+          app.activeMonsterId = best.id;
+          saveGame();
+          renderMonsterPanel();
+          closeDexModal();
+        };
+        grid.appendChild(card);
+      });
     }
 
     function addMonsterExp(exp) {
@@ -891,8 +1069,16 @@
       if (m.stage > oldStage) {
         const info = monsterInfo(m);
         if (m.stage >= finalStage && oldStage < finalStage) {
-          app.wishTickets = (app.wishTickets || 0) + 1;
-          showCelebration('🎫', '소원권 획득!', `${info.name} 최종 진화! 아빠에게 보여주세요.`);
+          app.wishPieces = (app.wishPieces || 0) + 1;
+          let title = '소원조각 획득!';
+          let text = `${info.name} 최종 진화! 소원조각을 1개 얻었어요.`;
+          if (app.wishPieces >= 3) {
+            app.wishPieces -= 3;
+            app.wishTickets = (app.wishTickets || 0) + 1;
+            title = '소원권 완성!';
+            text = `${info.name} 최종 진화! 소원조각 3개가 모여 소원권 1장이 되었어요. 아빠에게 보여주세요.`;
+          }
+          showCelebration(app.wishTickets > 0 && title === '소원권 완성!' ? '🎫' : '🧩', title, text);
           playSound('wish');
         } else {
           showToast(info.emoji, '진화했어요!', `${info.name}(으)로 성장했어요.`);
@@ -903,11 +1089,23 @@
 
     function hatchEggIfNeeded(preferredMode) {
       while (app.stars >= app.nextEggAt) {
+        const family = getSubjectMonsterFamily(preferredMode || app.mode);
+        const unfinished = (app.monsters || []).find(m => getFamilyForMonster(m) === family && m.stage < MONSTER_BOOK[m.type].length - 1);
+        app.nextEggAt += EGG_INTERVAL;
+
+        if (unfinished) {
+          app.activeMonsterId = unfinished.id;
+          addMonsterExp(10);
+          const info = monsterInfo(unfinished);
+          showToast('🍬', '성장간식 획득!', `${info.name}(이/가) 성장간식으로 경험치 10을 얻었어요.`);
+          playSound('egg');
+          continue;
+        }
+
         const type = getSubjectMonsterType(preferredMode || app.mode);
         const monster = { type, exp: 0, stage: 0, id: Date.now() + Math.floor(Math.random() * 10000) };
         app.monsters.push(monster);
         app.activeMonsterId = monster.id;
-        app.nextEggAt += EGG_INTERVAL;
         const info = monsterInfo(monster);
         showToast(info.emoji, '새 단원 친구가 태어났어요!', `${modeDisplayName(preferredMode || app.mode)} 계열 ${info.name}(이/가) 도감에 추가됐어요.`);
         playSound('egg');
@@ -1017,7 +1215,7 @@
     }
 
     window.addEventListener('keydown', event => {
-      if (event.key === 'Escape') closeDrawer();
+      if (event.key === 'Escape') { closeDrawer(); closeDexModal(); }
     });
 
     function showStart() {
@@ -1079,14 +1277,6 @@
       updateStats();
       renderParentSummary();
       showToast('✅', '소원권 1장 차감', '소원권을 사용 처리했어요.');
-    }
-
-    function addTestWishTicket() {
-      app.wishTickets = (app.wishTickets || 0) + 1;
-      saveGame();
-      updateStats();
-      renderParentSummary();
-      showToast('🧪', '테스트 소원권 추가', '테스트용 소원권 1장을 추가했어요.');
     }
 
     function resetAllGame() {
@@ -1270,9 +1460,10 @@
     }
 
     function makeQuestion(mode) {
-      const pool = mode === 'mixed' ? ['gugu', 'divisionPrinciple', 'addsub', 'mul', 'div', 'measure', 'frac', 'shape'] : [mode];
+      const pool = mode === 'mixed' ? ['gugu', 'divisionPrinciple', 'life', 'addsub', 'mul', 'div', 'measure', 'frac', 'shape'] : [mode];
       const selected = pick(pool);
       if (selected === 'review') return makeReviewQuestion();
+      if (selected === 'life') return makeLifeMissionQuestion();
       if (selected === 'gugu') return makeGuguQuestion();
       if (selected === 'divisionPrinciple') return makeDivisionPrincipleQuestion();
       if (selected === 'addsub') return makeAddSubQuestion();
@@ -1282,6 +1473,86 @@
       if (selected === 'frac') return makeFractionQuestion();
       if (selected === 'shape') return makeShapeQuestion();
       return makeGuguQuestion();
+    }
+
+    function makeLifeMissionQuestion() {
+      const pool = app.difficulty === 'easy'
+        ? ['snack-mul','pizza-share','school-group','library-add','sticker-sub','sports-count']
+        : app.difficulty === 'normal'
+          ? ['snack-mul','pizza-share','school-group','library-add','sticker-sub','sports-count','market-price','party-cup','bus-minute','graph-snack']
+          : ['market-price','party-cup','bus-minute','graph-snack','two-step-party','compare-shopping','fraction-cake','time-practice'];
+      const type = pick(pool);
+
+      if (type === 'snack-mul') {
+        const packs = rand(2, app.difficulty === 'easy' ? 5 : 8);
+        const per = rand(3, app.difficulty === 'easy' ? 6 : 9);
+        return { mode:'life', originalMode:'mul', question:`간식 상자에 젤리가 ${per}개씩 들어 있어요. ${packs}상자를 열면 젤리는 모두 몇 개일까요?`, sub:'같은 수가 여러 번 반복되면 곱셈으로 생각해요.', answer:packs*per, hint:{type:'circles',groups:packs,per}, explain:`${per}개씩 ${packs}상자이므로 ${per} × ${packs} = ${packs*per}개예요.` };
+      }
+      if (type === 'pizza-share') {
+        const friends = rand(2, app.difficulty === 'easy' ? 5 : 8);
+        const each = rand(2, app.difficulty === 'easy' ? 4 : 6);
+        const total = friends * each;
+        return { mode:'life', originalMode:'divisionPrinciple', question:`피자 조각 ${total}개를 ${friends}명이 똑같이 나누어 먹어요. 한 명은 몇 조각씩 먹을까요?`, sub:'전체를 같은 수의 사람에게 똑같이 나누어요.', answer:each, hint:{type:'divisionPrinciple',total,divisor:friends,answer:each}, explain:`${total}조각을 ${friends}명이 똑같이 나누면 ${total} ÷ ${friends} = ${each}조각이에요.` };
+      }
+      if (type === 'school-group') {
+        const per = rand(3, 8);
+        const groups = rand(2, app.difficulty === 'easy' ? 5 : 9);
+        const total = per * groups;
+        return { mode:'life', originalMode:'div', question:`색종이 ${total}장을 한 모둠에 ${per}장씩 나누어 주려고 해요. 몇 모둠에게 줄 수 있을까요?`, sub:'한 묶음에 몇 개씩인지 알 때는 몇 묶음인지 나눗셈으로 구해요.', answer:groups, hint:{type:'division',total,divisor:per}, explain:`${per}장씩 나누면 ${total} ÷ ${per} = ${groups}모둠이에요.` };
+      }
+      if (type === 'library-add') {
+        const a = app.difficulty === 'easy' ? rand(20, 80) : rand(120, 360);
+        const b = app.difficulty === 'easy' ? rand(10, 70) : rand(80, 260);
+        return { mode:'life', originalMode:'addsub', question:`도서관에서 민지가 책을 ${a}쪽 읽고, 다음 날 ${b}쪽을 더 읽었어요. 모두 몇 쪽을 읽었을까요?`, sub:'모두 읽은 쪽수는 더하기로 구해요.', answer:a+b, hint:{type:'place',a,b,op:'+'}, explain:`${a}쪽과 ${b}쪽을 더하면 ${a+b}쪽이에요.` };
+      }
+      if (type === 'sticker-sub') {
+        const a = app.difficulty === 'easy' ? rand(40, 99) : rand(180, 520);
+        const b = app.difficulty === 'easy' ? rand(10, Math.min(50, a-10)) : rand(70, Math.min(300, a-50));
+        return { mode:'life', originalMode:'addsub', question:`스티커가 ${a}장 있었는데 친구에게 ${b}장을 주었어요. 남은 스티커는 몇 장일까요?`, sub:'남은 것을 묻는 문제는 빼기로 생각해요.', answer:a-b, hint:{type:'place',a,b,op:'-'}, explain:`${a}장에서 ${b}장을 빼면 ${a-b}장이 남아요.` };
+      }
+      if (type === 'sports-count') {
+        const rows = rand(2, app.difficulty === 'easy' ? 4 : 7);
+        const per = rand(4, app.difficulty === 'easy' ? 6 : 9);
+        return { mode:'life', originalMode:'mul', question:`운동회에서 의자를 한 줄에 ${per}개씩 ${rows}줄 놓았어요. 의자는 모두 몇 개일까요?`, sub:'줄과 개수가 반복되면 곱셈으로 생각해요.', answer:rows*per, hint:{type:'circles',groups:rows,per}, explain:`${per}개씩 ${rows}줄이므로 ${per} × ${rows} = ${rows*per}개예요.` };
+      }
+      if (type === 'market-price') {
+        const price = pick([120,150,200,250,300,350,400]);
+        const count = rand(2, app.difficulty === 'normal' ? 5 : 8);
+        return { mode:'life', originalMode:'mul', question:`마트에서 우유 한 개가 ${price}원이에요. ${count}개를 사면 모두 몇 원일까요?`, sub:'같은 가격을 여러 번 더하면 곱셈이에요.', answer:price*count, hint:{type:'decomposeMul',a:price,b:count}, explain:`${price}원씩 ${count}개이므로 ${price} × ${count} = ${price*count}원이에요.` };
+      }
+      if (type === 'party-cup') {
+        const people = rand(4, 9);
+        const each = rand(2, 5);
+        const total = people * each;
+        return { mode:'life', originalMode:'divisionPrinciple', question:`생일파티 컵 ${total}개를 ${people}명에게 똑같이 나누어 주면 한 명에게 몇 개씩 줄 수 있을까요?`, sub:'전체를 같은 수의 사람에게 나누는 문제예요.', answer:each, hint:{type:'divisionPrinciple',total,divisor:people,answer:each}, explain:`${total}개를 ${people}명에게 나누면 ${total} ÷ ${people} = ${each}개예요.` };
+      }
+      if (type === 'bus-minute') {
+        const ride = rand(15, 45);
+        const walk = rand(5, 20);
+        return { mode:'life', originalMode:'measure', question:`집에서 버스정류장까지 ${walk}분, 버스를 타고 학원까지 ${ride}분 걸려요. 모두 몇 분 걸릴까요?`, sub:'걸린 시간을 모두 더해요.', answer:walk+ride, hint:{type:'unit',lines:[`걸어서 ${walk}분`,`버스로 ${ride}분`,`두 시간을 더해요`]}, explain:`${walk}분 + ${ride}분 = ${walk+ride}분이에요.` };
+      }
+      if (type === 'graph-snack') {
+        const unit = pick([2,5]);
+        const a = rand(3, 7);
+        return { mode:'life', originalMode:'shape', question:`간식 그림표에서 🍪 1개는 ${unit}개를 뜻해요. 🍪가 ${a}개이면 간식은 모두 몇 개일까요?`, sub:'그림 하나가 몇 개를 뜻하는지 보고 곱해요.', answer:unit*a, hint:{type:'shape',lines:[`🍪 1개 = ${unit}개`,`🍪가 ${a}개`,`${unit}을 ${a}번 더해요`]}, explain:`${unit}개씩 ${a}개이므로 ${unit*a}개예요.` };
+      }
+      if (type === 'two-step-party') {
+        const a = rand(80, 220), b = rand(40, 150), c = rand(30, 120);
+        return { mode:'life', originalMode:'addsub', question:`파티 풍선이 ${a}개 있었어요. ${b}개를 더 불고, ${c}개를 장식에 썼어요. 남은 풍선은 몇 개일까요?`, sub:'먼저 더하고, 그다음 쓴 만큼 빼요.', answer:a+b-c, hint:{type:'unit',lines:[`처음 ${a}개`,`${b}개를 더하면 ${a+b}개`,`${c}개를 쓰면 남은 수를 구해요`]}, explain:`${a} + ${b} = ${a+b}, ${a+b} - ${c} = ${a+b-c}개예요.` };
+      }
+      if (type === 'compare-shopping') {
+        const a = rand(420, 900), b = rand(120, 380);
+        return { mode:'life', originalMode:'addsub', question:`장난감 A는 ${a}원, 간식 B는 ${b}원이에요. 장난감 A가 간식 B보다 몇 원 더 비쌀까요?`, sub:'얼마나 더 큰지 묻는 문제는 빼기로 생각해요.', answer:a-b, hint:{type:'place',a,b,op:'-'}, explain:`${a}원에서 ${b}원을 빼면 ${a-b}원 더 비싸요.` };
+      }
+      if (type === 'fraction-cake') {
+        const den = pick([4,6,8]);
+        const eaten = rand(1, den-2);
+        const left = den - eaten;
+        return { mode:'life', originalMode:'frac', question:`케이크를 ${den}조각으로 나누고 ${eaten}조각을 먹었어요. 남은 것은 ${den}분의 몇일까요?`, sub:'남은 조각 수가 분자예요. 분자만 입력해요.', answer:left, hint:{type:'fraction',den,num:left}, explain:`${den}조각 중 ${eaten}조각을 먹으면 ${left}조각이 남아서 ${den}분의 ${left}예요.` };
+      }
+      const start = rand(1, 7);
+      const add = rand(2, 4);
+      return { mode:'life', originalMode:'measure', question:`오후 ${start}시에 놀이터에 갔고 ${add}시간 뒤에 집에 왔어요. 집에 온 시각은 오후 몇 시일까요?`, sub:'시각에 지난 시간을 더해요.', answer:start+add, hint:{type:'unit',lines:[`시작은 오후 ${start}시`,`지난 시간은 ${add}시간`,`${start}에서 ${add}만큼 세어 봐요`]}, explain:`오후 ${start}시에서 ${add}시간 뒤는 오후 ${start+add}시예요.` };
     }
 
     function getSubjectMonsterFamily(mode) {
