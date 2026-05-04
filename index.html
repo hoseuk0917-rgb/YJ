@@ -233,6 +233,161 @@
     .dex-name { font-size: 12px; font-weight: 950; margin-top: 4px; }
     .dex-status { color: var(--muted); font-size: 10px; font-weight: 850; margin-top: 3px; }
 
+    .workpad-open-inline {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 11px;
+      border-radius: 999px;
+      background: #eefdf7;
+      color: #0e7a5a;
+      border: 1px solid #bdebd9;
+      font-size: 13px;
+      font-weight: 950;
+    }
+    .workpad2 {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 120;
+      width: min(460px, calc(100vw - 28px));
+      height: min(500px, calc(100vh - 36px));
+      display: none;
+      grid-template-rows: auto 1fr auto;
+      border-radius: 26px;
+      background: rgba(255,255,255,0.98);
+      border: 1px solid var(--line);
+      box-shadow: 0 24px 70px rgba(32,35,58,0.26);
+      overflow: hidden;
+    }
+    .workpad2.show { display: grid; }
+    .workpad2-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 14px;
+      background: #f8fbff;
+      border-bottom: 1px solid var(--line);
+    }
+    .workpad2-title { font-weight: 950; }
+    .workpad2-close { padding: 8px 10px; border-radius: 12px; background: #fff5f5; color: #b42318; border: 1px solid #ffd0d3; font-weight: 950; }
+    .workpad2-body {
+      min-height: 0;
+      padding: 10px;
+      background:
+        linear-gradient(#eef2ff 1px, transparent 1px),
+        linear-gradient(90deg, #eef2ff 1px, transparent 1px),
+        #fff;
+      background-size: 28px 28px;
+    }
+    #workpad2Canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.75);
+      border: 1px solid #dfe4f2;
+      touch-action: none;
+    }
+    .workpad2-tools {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      padding: 10px;
+      border-top: 1px solid var(--line);
+      background: #fff;
+    }
+    .workpad2-tool {
+      padding: 10px 6px;
+      border-radius: 14px;
+      background: #f8fbff;
+      border: 1px solid var(--line);
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 950;
+    }
+    .workpad2-tool.active { background: var(--soft-purple); color: #5145cf; border-color: #d8d1ff; }
+
+    .scratch-toggle {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 55;
+      width: 62px;
+      height: 62px;
+      display: grid;
+      place-items: center;
+      border-radius: 22px;
+      background: linear-gradient(135deg, var(--main), #8d7cff);
+      color: #fff;
+      font-size: 28px;
+      box-shadow: 0 16px 36px rgba(80,89,140,0.24);
+    }
+    .scratch-pad {
+      position: fixed;
+      right: 18px;
+      bottom: 92px;
+      z-index: 56;
+      width: min(420px, calc(100vw - 28px));
+      height: min(460px, calc(100vh - 130px));
+      display: none;
+      grid-template-rows: auto 1fr auto;
+      border-radius: 26px;
+      background: rgba(255,255,255,0.98);
+      border: 1px solid var(--line);
+      box-shadow: 0 24px 70px rgba(32,35,58,0.24);
+      overflow: hidden;
+    }
+    .scratch-pad.show { display: grid; }
+    .scratch-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 14px;
+      background: #f8fbff;
+      border-bottom: 1px solid var(--line);
+    }
+    .scratch-title { font-weight: 950; }
+    .scratch-close { padding: 8px 10px; border-radius: 12px; background: #fff5f5; color: #b42318; border: 1px solid #ffd0d3; font-weight: 950; }
+    .scratch-canvas-wrap {
+      min-height: 0;
+      padding: 10px;
+      background:
+        linear-gradient(#eef2ff 1px, transparent 1px),
+        linear-gradient(90deg, #eef2ff 1px, transparent 1px),
+        #fff;
+      background-size: 28px 28px;
+    }
+    #scratchCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid #dfe4f2;
+      touch-action: none;
+    }
+    .scratch-tools {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      padding: 10px;
+      border-top: 1px solid var(--line);
+      background: #fff;
+    }
+    .scratch-tool {
+      padding: 10px 6px;
+      border-radius: 14px;
+      background: #f8fbff;
+      border: 1px solid var(--line);
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 950;
+    }
+    .scratch-tool.active { background: var(--soft-purple); color: #5145cf; border-color: #d8d1ff; }
+
     .progress-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
     .progress-dots { display: flex; gap: 6px; flex-wrap: wrap; }
     .dot { width: 13px; height: 13px; border-radius: 999px; background: #dfe4f2; }
@@ -518,6 +673,7 @@
               <div class="question-meta">
                 <div class="unit-chip" id="unitChip">🎒 3학년 실전</div>
                 <div class="difficulty-chip" id="difficultyChip">난이도: 쉬움</div>
+                <button class="workpad-open-inline" onclick="toggleWorkPad2(true)">✏️ 풀이장</button>
               </div>
               <div class="question-text" id="questionText">문제 준비 중...</div>
               <div class="question-sub" id="questionSub">숫자를 입력하고 확인을 눌러요.</div>
@@ -632,7 +788,146 @@
     </div>
   </div>
 
+  <button class="scratch-toggle" id="scratchToggle" onclick="toggleScratchPad()" aria-label="풀이장 열기">✏️</button>
+  <div class="scratch-pad" id="scratchPad">
+    <div class="scratch-head">
+      <div class="scratch-title">✏️ 풀이장</div>
+      <button class="scratch-close" onclick="toggleScratchPad(false)">닫기</button>
+    </div>
+    <div class="scratch-canvas-wrap">
+      <canvas id="scratchCanvas"></canvas>
+    </div>
+    <div class="scratch-tools">
+      <button class="scratch-tool active" id="penToolBtn" onclick="setScratchTool('pen')">연필</button>
+      <button class="scratch-tool" id="eraserToolBtn" onclick="setScratchTool('eraser')">지우개</button>
+      <button class="scratch-tool" onclick="undoScratch()">되돌리기</button>
+      <button class="scratch-tool" onclick="clearScratch()">전체지움</button>
+    </div>
+  </div>
+
+  <div class="workpad2" id="workpad2">
+    <div class="workpad2-head">
+      <div class="workpad2-title">✏️ 풀이장</div>
+      <button class="workpad2-close" onclick="toggleWorkPad2(false)">닫기</button>
+    </div>
+    <div class="workpad2-body">
+      <canvas id="workpad2Canvas"></canvas>
+    </div>
+    <div class="workpad2-tools">
+      <button class="workpad2-tool active" id="workpad2Pen" onclick="setWorkPad2Tool('pen')">연필</button>
+      <button class="workpad2-tool" id="workpad2Eraser" onclick="setWorkPad2Tool('eraser')">지우개</button>
+      <button class="workpad2-tool" onclick="undoWorkPad2()">되돌리기</button>
+      <button class="workpad2-tool" onclick="clearWorkPad2()">전체지움</button>
+    </div>
+  </div>
+
   <script>
+    (function () {
+      let ctx = null;
+      let drawing = false;
+      let tool = 'pen';
+      let history = [];
+      let lastPoint = null;
+
+      function canvas() { return document.getElementById('workpad2Canvas'); }
+      function pad() { return document.getElementById('workpad2'); }
+
+      function resizeCanvas() {
+        const c = canvas();
+        if (!c) return;
+        const rect = c.getBoundingClientRect();
+        const ratio = window.devicePixelRatio || 1;
+        c.width = Math.max(1, Math.floor(rect.width * ratio));
+        c.height = Math.max(1, Math.floor(rect.height * ratio));
+        ctx = c.getContext('2d');
+        ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+      }
+
+      window.toggleWorkPad2 = function (force) {
+        const p = pad();
+        if (!p) return;
+        const show = typeof force === 'boolean' ? force : !p.classList.contains('show');
+        p.classList.toggle('show', show);
+        if (show) setTimeout(resizeCanvas, 40);
+      };
+
+      window.setWorkPad2Tool = function (nextTool) {
+        tool = nextTool;
+        const pen = document.getElementById('workpad2Pen');
+        const eraser = document.getElementById('workpad2Eraser');
+        if (pen) pen.classList.toggle('active', tool === 'pen');
+        if (eraser) eraser.classList.toggle('active', tool === 'eraser');
+      };
+
+      function point(event) {
+        const rect = canvas().getBoundingClientRect();
+        return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+      }
+
+      function saveState() {
+        if (!ctx) return;
+        try {
+          history.push(ctx.getImageData(0, 0, canvas().width, canvas().height));
+          history = history.slice(-12);
+        } catch (e) {}
+      }
+
+      function start(event) {
+        event.preventDefault();
+        if (!ctx) resizeCanvas();
+        saveState();
+        drawing = true;
+        lastPoint = point(event);
+        try { canvas().setPointerCapture(event.pointerId); } catch (e) {}
+        ctx.beginPath();
+        ctx.moveTo(lastPoint.x, lastPoint.y);
+      }
+
+      function move(event) {
+        if (!drawing || !ctx) return;
+        event.preventDefault();
+        const p = point(event);
+        ctx.globalCompositeOperation = tool === 'eraser' ? 'destination-out' : 'source-over';
+        ctx.strokeStyle = '#20233a';
+        ctx.lineWidth = tool === 'eraser' ? 24 : 4;
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+        lastPoint = p;
+      }
+
+      function end(event) {
+        if (event) event.preventDefault();
+        drawing = false;
+        lastPoint = null;
+        if (ctx) ctx.globalCompositeOperation = 'source-over';
+      }
+
+      window.undoWorkPad2 = function () {
+        if (!ctx || history.length === 0) return;
+        try { ctx.putImageData(history.pop(), 0, 0); } catch (e) {}
+      };
+
+      window.clearWorkPad2 = function () {
+        if (!ctx) resizeCanvas();
+        saveState();
+        ctx.clearRect(0, 0, canvas().width, canvas().height);
+      };
+
+      setTimeout(function () {
+        const c = canvas();
+        if (!c) return;
+        c.addEventListener('pointerdown', start);
+        c.addEventListener('pointermove', move);
+        c.addEventListener('pointerup', end);
+        c.addEventListener('pointercancel', end);
+        window.addEventListener('resize', function () {
+          if (pad() && pad().classList.contains('show')) setTimeout(resizeCanvas, 80);
+        });
+      }, 50);
+    })();
+
     const MODES = [
       { id: 'mixed', icon: '🎒', name: '3학년 실전', desc: '여러 단원 섞어서 10문제' },
       { id: 'life', icon: '🏠', name: '생활미션', desc: '마트·학교·간식 상황 문제' },
@@ -719,7 +1014,7 @@
       feedbackTitle: document.getElementById('feedbackTitle'), feedbackText: document.getElementById('feedbackText'), hintBox: document.getElementById('hintBox'), feedbackButtons: document.getElementById('feedbackButtons'),
       startView: document.getElementById('startView'), quizView: document.getElementById('quizView'), resultView: document.getElementById('resultView'), resultEmoji: document.getElementById('resultEmoji'), resultTitle: document.getElementById('resultTitle'),
       resultMessage: document.getElementById('resultMessage'), resultCorrect: document.getElementById('resultCorrect'), resultStars: document.getElementById('resultStars'), resultBestStreak: document.getElementById('resultBestStreak'),
-      mainMonsterEmoji: document.getElementById('mainMonsterEmoji'), mainMonsterName: document.getElementById('mainMonsterName'), mainMonsterStage: document.getElementById('mainMonsterStage'), expFill: document.getElementById('expFill'), expText: document.getElementById('expText'), eggText: document.getElementById('eggText'), familyDex: document.getElementById('familyDex'), dexModal: document.getElementById('dexModal'), dexTabs: document.getElementById('dexTabs'), dexContent: document.getElementById('dexContent'),
+      mainMonsterEmoji: document.getElementById('mainMonsterEmoji'), mainMonsterName: document.getElementById('mainMonsterName'), mainMonsterStage: document.getElementById('mainMonsterStage'), expFill: document.getElementById('expFill'), expText: document.getElementById('expText'), eggText: document.getElementById('eggText'), familyDex: document.getElementById('familyDex'), dexModal: document.getElementById('dexModal'), dexTabs: document.getElementById('dexTabs'), dexContent: document.getElementById('dexContent'), scratchPad: document.getElementById('scratchPad'), scratchCanvas: document.getElementById('scratchCanvas'), penToolBtn: document.getElementById('penToolBtn'), eraserToolBtn: document.getElementById('eraserToolBtn'),
       menuToggle: document.getElementById('menuToggle'), sidePanel: document.getElementById('sidePanel'), drawerBackdrop: document.getElementById('drawerBackdrop'),
       toast: document.getElementById('toast'), toastEmoji: document.getElementById('toastEmoji'), toastTitle: document.getElementById('toastTitle'), toastText: document.getElementById('toastText'),
       celebration: document.getElementById('celebration'), celebrationEmoji: document.getElementById('celebrationEmoji'), celebrationTitle: document.getElementById('celebrationTitle'), celebrationText: document.getElementById('celebrationText'), soundToggleBtn: document.getElementById('soundToggleBtn'),
@@ -1118,6 +1413,107 @@
     let resetTimer = null;
     let wishUseArmed = false;
     let wishUseTimer = null;
+    let scratchCtx = null;
+    let scratchDrawing = false;
+    let scratchTool = 'pen';
+    let scratchHistory = [];
+    function initScratchCanvas() {
+      const canvas = els.scratchCanvas;
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const ratio = window.devicePixelRatio || 1;
+      const oldImage = scratchCtx ? scratchCtx.getImageData(0, 0, canvas.width, canvas.height) : null;
+      canvas.width = Math.max(1, Math.floor(rect.width * ratio));
+      canvas.height = Math.max(1, Math.floor(rect.height * ratio));
+      scratchCtx = canvas.getContext('2d');
+      scratchCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      scratchCtx.lineCap = 'round';
+      scratchCtx.lineJoin = 'round';
+      if (oldImage) {
+        try { scratchCtx.putImageData(oldImage, 0, 0); } catch (e) {}
+      }
+    }
+
+    function toggleScratchPad(force) {
+      const shouldShow = typeof force === 'boolean' ? force : !els.scratchPad.classList.contains('show');
+      els.scratchPad.classList.toggle('show', shouldShow);
+      if (shouldShow) setTimeout(initScratchCanvas, 30);
+    }
+
+    function setScratchTool(tool) {
+      scratchTool = tool;
+      els.penToolBtn.classList.toggle('active', tool === 'pen');
+      els.eraserToolBtn.classList.toggle('active', tool === 'eraser');
+    }
+
+    function scratchPoint(event) {
+      const canvas = els.scratchCanvas;
+      const rect = canvas.getBoundingClientRect();
+      const p = event.touches ? event.touches[0] : event;
+      return { x: p.clientX - rect.left, y: p.clientY - rect.top };
+    }
+
+    function saveScratchState() {
+      if (!scratchCtx || !els.scratchCanvas) return;
+      try {
+        scratchHistory.push(scratchCtx.getImageData(0, 0, els.scratchCanvas.width, els.scratchCanvas.height));
+        scratchHistory = scratchHistory.slice(-10);
+      } catch (e) {}
+    }
+
+    function startScratch(event) {
+      event.preventDefault();
+      if (!scratchCtx) initScratchCanvas();
+      saveScratchState();
+      scratchDrawing = true;
+      const p = scratchPoint(event);
+      scratchCtx.beginPath();
+      scratchCtx.moveTo(p.x, p.y);
+    }
+
+    function moveScratch(event) {
+      if (!scratchDrawing || !scratchCtx) return;
+      event.preventDefault();
+      const p = scratchPoint(event);
+      scratchCtx.globalCompositeOperation = scratchTool === 'eraser' ? 'destination-out' : 'source-over';
+      scratchCtx.strokeStyle = '#20233a';
+      scratchCtx.lineWidth = scratchTool === 'eraser' ? 22 : 4;
+      scratchCtx.lineTo(p.x, p.y);
+      scratchCtx.stroke();
+    }
+
+    function endScratch(event) {
+      if (event) event.preventDefault();
+      scratchDrawing = false;
+      if (scratchCtx) scratchCtx.globalCompositeOperation = 'source-over';
+    }
+
+    function undoScratch() {
+      if (!scratchCtx || scratchHistory.length === 0) return;
+      const prev = scratchHistory.pop();
+      try { scratchCtx.putImageData(prev, 0, 0); } catch (e) {}
+    }
+
+    function clearScratch() {
+      if (!scratchCtx) initScratchCanvas();
+      saveScratchState();
+      scratchCtx.clearRect(0, 0, els.scratchCanvas.width, els.scratchCanvas.height);
+    }
+
+    function attachScratchEvents() {
+      const canvas = els.scratchCanvas;
+      if (!canvas) return;
+      canvas.addEventListener('mousedown', startScratch);
+      canvas.addEventListener('mousemove', moveScratch);
+      window.addEventListener('mouseup', endScratch);
+      canvas.addEventListener('touchstart', startScratch, { passive: false });
+      canvas.addEventListener('touchmove', moveScratch, { passive: false });
+      canvas.addEventListener('touchend', endScratch, { passive: false });
+      window.addEventListener('resize', () => {
+        if (els.scratchPad.classList.contains('show')) setTimeout(initScratchCanvas, 60);
+      });
+    }
+
     function showToast(emoji, title, text) {
       clearTimeout(toastTimer);
       els.toastEmoji.textContent = emoji;
@@ -1299,6 +1695,7 @@
       renderDifficulty();
       updateStats();
       renderMonsterPanel();
+      attachScratchEvents();
       showStart();
       showToast('🔄', '전체 초기화 완료', '처음부터 다시 시작해요.');
     }
