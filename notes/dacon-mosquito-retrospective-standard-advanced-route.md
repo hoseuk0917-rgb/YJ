@@ -1,6 +1,7 @@
 # DACON 모기 미래 좌표 예측 회고 — 표준 고급 루트 체크리스트
 
-작성일: 2026-06-14
+작성일: 2026-06-14  
+업데이트: 2026-06-14 — 범용 데이터분석/ML 대회 표준 고급 루트 추가
 
 ## 1. 결론 요약
 
@@ -331,3 +332,409 @@ MLP / Tabular model:
 ```
 
 대부분의 경우 정답은 두 번째다.
+
+---
+
+# 부록 A. 범용 데이터분석/ML 대회 표준 고급 루트
+
+이번 모기 대회에 직접 해당된 루트는 `CV residual + local frame + internal window + soft metric loss + ensemble`이었지만, 더 넓은 ML 대회에서는 아래 루트들도 초반 체크리스트에 들어가야 한다.
+
+## A1. Target 변환 루트
+
+원래 정답을 그대로 맞히지 않고, 더 쉬운 형태로 바꾸는 방식이다.
+
+```text
+absolute target → residual target
+좌표값 → 변화량 / 속도 / 가속도
+raw value → log / rank / quantile
+multi-class → ordinal / binary cascade
+회귀 → threshold 근처 hit/miss 보조분류
+```
+
+적용 기준:
+
+- 강한 baseline이 있을 때
+- target scale이 크거나 분포가 heavy-tail일 때
+- 평가가 특정 threshold나 rank에 민감할 때
+- 절대값보다 변화량이 더 안정적일 때
+
+이번 대회에서는 `true coordinate` 직접 예측보다 `true - CV_pred` residual 예측이 맞는 루트였다.
+
+## A2. 좌표계 / 기준계 정렬 루트
+
+데이터가 회전·이동·스케일에 민감할 때 기준계를 맞추는 방식이다.
+
+```text
+translation normalization
+rotation alignment
+last direction 기준 local frame
+object-centric coordinate
+camera/sensor frame → ego frame
+scale normalization
+```
+
+자주 쓰이는 분야:
+
+- 좌표 예측
+- 자율주행 / 궤적 예측
+- 포즈 추정
+- 로봇 센서 데이터
+- 3D point / LiDAR 문제
+
+핵심 질문:
+
+```text
+모델이 절대좌표를 배워야 하는가,
+아니면 객체/진행방향/센서 기준으로 정렬된 공통 패턴을 배워야 하는가?
+```
+
+## A3. 내부 라벨 재사용 / self-supervised 루트
+
+라벨이 적어도 입력 내부에 예측 가능한 구조가 있으면 학습샘플을 늘리는 방식이다.
+
+```text
+sliding window pseudo target
+next-step prediction
+masked reconstruction
+contrastive pretraining
+sequence order prediction
+denoising autoencoder
+```
+
+적용 기준:
+
+- 시계열 안에 여러 시점이 있을 때
+- 이미지/음성/텍스트처럼 입력 자체를 복원하거나 일부를 예측할 수 있을 때
+- train label 수가 적지만 raw observation이 풍부할 때
+
+이번 대회의 `e → e+2` 내부 전이 증강이 여기에 해당한다.
+
+## A4. Metric-aware loss 루트
+
+대회 점수가 MSE/MAE가 아니면, 점수와 비슷한 loss를 직접 만든다.
+
+```text
+hit@threshold → soft sigmoid loss
+MAP/NDCG → ranking loss
+F1 → focal loss / class weight
+AUC → pairwise ranking loss
+quantile score → pinball loss
+competition metric surrogate
+```
+
+원칙:
+
+```text
+평가지표가 특이하면,
+학습 loss도 특이해야 한다.
+```
+
+후처리로 metric을 맞추는 것보다, 학습 단계에서 surrogate loss를 반영하는 편이 대체로 강하다.
+
+## A5. OOF 기반 stacking / blending 루트
+
+단일 모델을 고집하지 않고 OOF 예측을 쌓아 2차 모델이나 blend를 만든다.
+
+```text
+seed ensemble
+architecture ensemble
+fold ensemble
+OOF stacking
+rank averaging
+weighted blend
+hill-climbing blend
+```
+
+주의:
+
+- OOF 없이 Public만 보고 blend하면 쉽게 overfit된다.
+- 모델 family가 서로 달라야 ensemble gain이 크다.
+- 같은 모델 seed만 30개보다, 다른 inductive bias의 조합이 더 강할 수 있다.
+
+## A6. Error segmentation 루트
+
+전체 성능만 보지 않고, 실패 구간을 쪼개서 본다.
+
+```text
+speed bin별 성능
+distance/range bin별 성능
+confidence bin별 성능
+class별 / scene별 / length별 성능
+near-boundary sample 분석
+```
+
+주의:
+
+이번 프로젝트에서는 error segmentation을 많이 했지만, 주로 후처리 후보를 찾는 데 썼다. 원래는 먼저 **supervised model 개선 방향**을 정하는 데 써야 한다.
+
+## A7. Hard example mining 루트
+
+모델이 틀리는 샘플을 더 강하게 학습시키는 방식이다.
+
+```text
+miss sample overweight
+boundary sample overweight
+large residual sample sampling
+focal-style regression weighting
+curriculum learning
+```
+
+이번 대회라면 `CV가 1cm 밖으로 살짝 나간 샘플` 또는 `hit boundary 근처 샘플`을 더 크게 학습시키는 식이 가능했다.
+
+## A8. Uncertainty / abstention 루트
+
+모델이 자신 있는 구간과 불확실한 구간을 구분한다.
+
+```text
+prediction variance across seeds
+MC dropout
+ensemble std
+confidence model
+selector/gate model
+```
+
+주의:
+
+이 루트는 강한 base model이 있을 때 효과가 크다. 약한 base model 위에서 selector/gate를 먼저 파면, 노이즈를 학습하기 쉽다.
+
+이번 프로젝트의 candidate selector류는 방향 자체가 틀린 것은 아니지만, 순서가 너무 빨랐다.
+
+## A9. Test-time augmentation / symmetry 루트
+
+추론 때 입력을 변환해서 여러 번 예측하고 되돌려 평균낸다.
+
+```text
+flip TTA
+rotation TTA
+time crop TTA
+scale TTA
+noise TTA
+```
+
+적용 조건:
+
+- 문제의 물리적 대칭성이 실제로 성립해야 함
+- inverse transform이 명확해야 함
+- OOF에서 TTA gain을 먼저 확인해야 함
+
+좌표·이미지·시계열에서 자주 쓰인다.
+
+## A10. Pseudo-labeling / semi-supervised 루트
+
+test 예측을 다시 학습에 쓰는 방식이다.
+
+```text
+high-confidence pseudo label
+teacher-student
+self-training
+consistency regularization
+```
+
+주의:
+
+대회 규칙에 따라 금지될 수 있다. 이번 대회는 제공된 test를 어떠한 형태로도 모델 학습에 쓰면 안 되므로, 이 루트는 금지에 가깝다.
+
+구분이 중요하다.
+
+```text
+train 내부 전이 증강: 허용 가능성이 높음
+test pseudo-label 학습: 규칙 위반 가능성이 큼
+```
+
+## A11. Data leakage / split audit 루트
+
+상위권이 가끔 찾는 구조적 누수 확인이다.
+
+```text
+duplicate row
+near duplicate
+group leakage
+time order leakage
+ID/order pattern
+train-test overlap
+label generation artifact
+```
+
+이번 프로젝트에서는 이쪽을 꽤 많이 봤고, 큰 누수는 찾지 못했다. 이 루트는 중요하지만, 누수가 없으면 빨리 닫고 supervised route로 돌아가야 한다.
+
+## A12. 모델 family 확장 루트
+
+문제 유형별로 초반에 최소한 돌려봐야 하는 family가 있다.
+
+시계열 회귀:
+
+```text
+CV/CA physics baseline
+MLP residual
+GRU/LSTM
+TCN/1D CNN
+Transformer encoder
+Neural ODE
+Kalman/State-space model
+Gray-box physics model
+```
+
+정형 데이터:
+
+```text
+LightGBM
+XGBoost
+CatBoost
+TabNet/MLP
+target encoding
+rank averaging
+```
+
+이미지:
+
+```text
+pretrained CNN/ViT
+strong augmentation
+TTA
+pseudo-label
+cutmix/mixup
+```
+
+텍스트/NLP:
+
+```text
+pretrained transformer fine-tuning
+instruction/prompt variation
+retrieval augmentation
+class-balanced sampling
+threshold calibration
+```
+
+## A13. Validation design 루트
+
+상위권에서 가장 중요한 축 중 하나다.
+
+```text
+random KFold가 맞는가?
+GroupKFold가 필요한가?
+time split이 필요한가?
+public/private 분포 차이가 있는가?
+leakage 없는 OOF인가?
+pseudo-group split이 가능한가?
+```
+
+이번 대회는 train/test가 서로 다른 환경 조건이라고 설명되어 있었다. 환경 ID가 없더라도 speed/range/trajectory feature 기반 pseudo-group split을 고려했어야 한다.
+
+## A14. Calibration / threshold optimization 루트
+
+확률, confidence, threshold가 점수에 영향을 주는 문제에서는 calibration이 중요하다.
+
+```text
+probability calibration
+Platt scaling / isotonic regression
+threshold per class
+threshold per segment
+rank calibration
+```
+
+이번 대회처럼 regression + hit threshold인 경우에는 다음이 해당된다.
+
+```text
+예측 distance/confidence 추정
+near-boundary sample 보정
+segment별 residual scale calibration
+```
+
+다만 이것도 강한 supervised model 이후에 붙이는 것이 맞다.
+
+## A15. Feature store / experiment governance 루트
+
+탐색이 많아지는 대회일수록 실험 관리가 성능에 직접 영향을 준다.
+
+```text
+OOF prediction 저장
+test prediction 저장
+config hash 저장
+submission score 매핑
+실험별 seed/fold/feature 기록
+실패 실험 종료 사유 기록
+```
+
+이번 프로젝트는 실험 수가 매우 많았지만, 초반에 “상위권 표준 루트 우선순위”가 고정되지 않아 실험이 후처리 쪽으로 과도하게 확장됐다.
+
+## A16. Postprocessing은 마지막 루트
+
+후처리 자체도 표준 고급 루트이긴 하지만, 순서가 중요하다.
+
+```text
+1. strong supervised model
+2. robust OOF validation
+3. ensemble
+4. calibration
+5. postprocessing
+```
+
+이번 프로젝트에서는 4~5번을 너무 일찍 오래 한 것이 문제였다.
+
+---
+
+# 부록 B. 다음 대회 강제 운영 원칙
+
+## B1. 강한 baseline이 있을 때
+
+```text
+좋은 baseline이 보이면:
+baseline을 버리지 말고 residual target으로 만든다.
+```
+
+## B2. 좌표/방향/시계열 문제일 때
+
+```text
+좌표/방향/시계열이면:
+local frame과 내부 window 증강을 먼저 본다.
+```
+
+## B3. 평가지표가 특이할 때
+
+```text
+평가지표가 특이하면:
+그 지표의 soft loss를 만든다.
+```
+
+## B4. 후처리 진입 조건
+
+```text
+후처리는:
+강한 supervised model 이후에만 한다.
+```
+
+## B5. 초반 3일 강제 순서
+
+```text
+Day 1:
+  baseline 재현
+  residual target 정의
+  validation 설계
+  local/frame/target 변환 가능성 확인
+
+Day 2:
+  internal label augmentation
+  MLP/GRU/TCN residual model
+  metric-aware loss prototype
+
+Day 3:
+  seed ensemble
+  architecture ensemble
+  ODE/gray-box physics 추가
+
+Day 4+:
+  selector/gate/calibration/postprocessing
+```
+
+## B6. 금지 규칙
+
+```text
+강한 supervised residual model을 만들기 전에는
+후처리 grid search를 대량으로 돌리지 않는다.
+
+Public LB로 후보를 고르기 전에
+OOF 구조와 validation split이 맞는지 먼저 검증한다.
+
+기존 제출파일을 뒤지는 일은
+새 구조 실험보다 우선하지 않는다.
+```
